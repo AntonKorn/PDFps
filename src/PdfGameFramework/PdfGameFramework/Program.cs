@@ -20,7 +20,7 @@ namespace PdfGameFramework
                 var canvasTop = 800;
                 var canvasLeft = 50;
 
-                var screenMatrixWidth = 50f;
+                var screenMatrixWidth = 150f;
                 var screenMatrixHeight = 50f;
 
                 var canvasWidth = 400f;

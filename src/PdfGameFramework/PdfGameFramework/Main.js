@@ -1,6 +1,6 @@
 ﻿try {
 
-    var canvasWidth = 50;
+    var canvasWidth = 150;
     var canvasHeight = 50;
     var fieldOfView = Math.PI / 3;
 
@@ -10,7 +10,7 @@
 
     var angleDelta = 0;
 
-    var updateDuration = 500;
+    var updateDuration = 50;
     app.setInterval("physicsUpdate()", updateDuration);
 
     var map = [
@@ -30,14 +30,34 @@
     var mapWidth = map[0].length;
     var mapHeight = map.length;
     var maxDistance = Math.max(mapWidth, mapHeight);
-    app.alert(mapWidth + " out " + mapHeight);
+
+    var columnsPerUpdate = 30;
+    var lastColumn = 0;
+
+    var screenState = [];
+
+    var greenColor = "green";
+    var blueColor = "blue";
+    var transparentColor = "transp";
+
+    function fillInitialScreenState() {
+        for (var x = 0; x < canvasWidth; x++) {
+            screenState.push([]);
+            for (var y = 0; y < canvasHeight; y++) {
+                screenState[x] = { color: greenColor };
+            }
+        }
+    }
 
     function physicsUpdate() {
+        x = lastColumn % canvasWidth;
+        var lastUpdateColumn = x + columnsPerUpdate;
+
         if (angleDelta != 0) {
-            playerAngle += angleDelta ;
+            playerAngle += angleDelta;
         }
 
-        for (var x = 0; x < canvasWidth; x++) {
+        for (var x = 0; x < lastUpdateColumn; x++) {
             var rayAngle = playerAngle - fieldOfView / 2 + fieldOfView * x / canvasWidth;
             var distanceIncrement = 0.1;
             var distance = 0;
@@ -83,9 +103,11 @@
                 }
             }
         }
+
+        lastColumn = x;
     }
 
-    var cameraSpeed = 0.01;
+    var cameraSpeed = 0.2;
 
     function leftClicked() {
         angleDelta = -cameraSpeed;
@@ -117,20 +139,51 @@
     }
 
     function setGreen(x, y) {
-        var fieldName = 'mtx_' + x + '_' + y + '_0';
-        getField(fieldName).display = display.hidden;
-        fieldName = 'mtx_' + x + '_' + y + '_1';
-        getField(fieldName).display = display.visible;
+        var state = screenState[x][y];
+        if (state.color != greenColor) {
+            if (state.color == blueColor) {
+                var fieldName = 'mtx_' + x + '_' + y + '_0';
+                getField(fieldName).display = display.hidden;
+            }
+
+            fieldName = 'mtx_' + x + '_' + y + '_1';
+            getField(fieldName).display = display.visible;
+
+            state.color = greenColor;
+        }
     }
 
     function setBlue(x, y) {
-        var fieldName = 'mtx_' + x + '_' + y + '_1';
-        getField(fieldName).display = display.hidden;
-        fieldName = 'mtx_' + x + '_' + y + '_0';
-        getField(fieldName).display = display.visible;
+        var state = screenState[x][y];
+        if (state.color != blueColor) {
+            if (state.color == greenColor) {
+                var fieldName = 'mtx_' + x + '_' + y + '_1';
+                getField(fieldName).display = display.hidden;
+            }
+
+            fieldName = 'mtx_' + x + '_' + y + '_0';
+            getField(fieldName).display = display.visible;
+
+            state.color = blueColor;
+        }
     }
 
     function setTransparent(x, y) {
+        var state = screenState[x][y];
+        if (state.color != transparentColor) {
+            if (state.color == greenColor) {
+                var fieldName = 'mtx_' + x + '_' + y + '_1';
+                getField(fieldName).display = display.hidden;
+            }
+
+            if (state.color == blueColor) {
+                var fieldName = 'mtx_' + x + '_' + y + '_0';
+                getField(fieldName).display = display.hidden;
+            }
+
+            state.color = transparentColor;
+        }
+
         var fieldName = 'mtx_' + x + '_' + y + '_1';
         getField(fieldName).display = display.hidden;
         fieldName = 'mtx_' + x + '_' + y + '_0';
