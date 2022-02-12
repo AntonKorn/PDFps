@@ -1,7 +1,7 @@
 ﻿try {
 
-    var canvasWidth = 150;
-    var canvasHeight = 50;
+    var canvasWidth = 80;
+    var canvasHeight = 60;
     var fieldOfView = Math.PI / 3;
 
     var playerX = 10;
@@ -10,8 +10,9 @@
 
     var angleDelta = 0;
 
-    var updateDuration = 50;
+    var updateDuration = 500;
     app.setInterval("physicsUpdate()", updateDuration);
+    app.setTimeOut("fillInitialScreenState()", 10);
 
     var map = [
         "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
@@ -31,7 +32,7 @@
     var mapHeight = map.length;
     var maxDistance = Math.max(mapWidth, mapHeight);
 
-    var columnsPerUpdate = 30;
+    var columnsPerUpdate = canvasWidth;
     var lastColumn = 0;
 
     var screenState = [];
@@ -42,9 +43,16 @@
 
     function fillInitialScreenState() {
         for (var x = 0; x < canvasWidth; x++) {
-            screenState.push([]);
+            var column = [];
+            screenState.push(column);
             for (var y = 0; y < canvasHeight; y++) {
-                screenState[x] = { color: greenColor };
+                column.push({ color: transparentColor });
+
+                var greenFieldName = 'mtx_' + x + '_' + y + '_1';
+                getField(greenFieldName).display = display.hidden;
+
+                var blueFieldName = 'mtx_' + x + '_' + y + '_0';
+                getField(blueFieldName).display = display.hidden;
             }
         }
     }
@@ -123,31 +131,16 @@
         angleDelta = cameraSpeed;
     }
 
-    function setPixel(x, y) {
-        var fieldName = 'mtx_' + x + '_' + y + '_1';
-        getField(fieldName).display = display.hidden;
-        fieldName = 'mtx_' + x + '_' + y + '_0';
-        getField(fieldName).display = display.visible;
-
-    }
-
-    function unsetPixel(x, y) {
-        var fieldName = 'mtx_' + x + '_' + y + '_0';
-        getField(fieldName).display = display.hidden;
-        fieldName = 'mtx_' + x + '_' + y + '_1';
-        getField(fieldName).display = display.visible;
-    }
-
     function setGreen(x, y) {
         var state = screenState[x][y];
         if (state.color != greenColor) {
             if (state.color == blueColor) {
-                var fieldName = 'mtx_' + x + '_' + y + '_0';
-                getField(fieldName).display = display.hidden;
+                var blueFieldName = 'mtx_' + x + '_' + y + '_0';
+                getField(blueFieldName).display = display.hidden;
             }
 
-            fieldName = 'mtx_' + x + '_' + y + '_1';
-            getField(fieldName).display = display.visible;
+            var greenFieldName = 'mtx_' + x + '_' + y + '_1';
+            getField(greenFieldName).display = display.visible;
 
             state.color = greenColor;
         }
@@ -157,12 +150,12 @@
         var state = screenState[x][y];
         if (state.color != blueColor) {
             if (state.color == greenColor) {
-                var fieldName = 'mtx_' + x + '_' + y + '_1';
-                getField(fieldName).display = display.hidden;
+                var greenFieldName = 'mtx_' + x + '_' + y + '_1';
+                getField(greenFieldName).display = display.hidden;
             }
 
-            fieldName = 'mtx_' + x + '_' + y + '_0';
-            getField(fieldName).display = display.visible;
+            var blueFieldName = 'mtx_' + x + '_' + y + '_0';
+            getField(blueFieldName).display = display.visible;
 
             state.color = blueColor;
         }
@@ -172,22 +165,17 @@
         var state = screenState[x][y];
         if (state.color != transparentColor) {
             if (state.color == greenColor) {
-                var fieldName = 'mtx_' + x + '_' + y + '_1';
-                getField(fieldName).display = display.hidden;
+                var greenFieldName = 'mtx_' + x + '_' + y + '_1';
+                getField(greenFieldName).display = display.hidden;
             }
 
             if (state.color == blueColor) {
-                var fieldName = 'mtx_' + x + '_' + y + '_0';
-                getField(fieldName).display = display.hidden;
+                var blueFieldName = 'mtx_' + x + '_' + y + '_0';
+                getField(blueFieldName).display = display.hidden;
             }
 
             state.color = transparentColor;
         }
-
-        var fieldName = 'mtx_' + x + '_' + y + '_1';
-        getField(fieldName).display = display.hidden;
-        fieldName = 'mtx_' + x + '_' + y + '_0';
-        getField(fieldName).display = display.hidden;
     }
 
     function isMapTileSet(x, y) {
