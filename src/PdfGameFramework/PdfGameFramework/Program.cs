@@ -20,8 +20,11 @@ namespace PdfGameFramework
                 var canvasTop = 800;
                 var canvasLeft = 50;
 
-                var screenMatrixWidth = 80f;
-                var screenMatrixHeight = 60f;
+                var screenMatrixWidth = 50f;
+                var screenMatrixHeight = 50f;
+
+                var screenLinesMatrixWidth = 80f;
+                var screenLinesMatrixHeight = 60f;
 
                 var canvasWidth = 400f;
                 var canvasHeight = 400f;
@@ -37,7 +40,7 @@ namespace PdfGameFramework
                     {
                         var x = canvasLeft + column * cellWidth;
                         var y = canvasTop - row * cellWidth;
-                        var field = AddField($"mtx_{column}_{row}_1", x, y, cellWidth, cellHeight, 0f, 66f, 0f, pdf);
+                        var field = AddField($"mtx_{column}_{row}_1", x, y - cellHeight, cellWidth, cellHeight, 0f, 66f, 0f, pdf);
                         fields.Add(field);
                     }
                 }
@@ -48,7 +51,38 @@ namespace PdfGameFramework
                     {
                         var x = canvasLeft + column * cellWidth;
                         var y = canvasTop - row * cellWidth;
-                        var field = AddField($"mtx_{column}_{row}_0", x, y, cellWidth, cellHeight, 0.1f, 0.1f, 0.1f, pdf);
+                        var field = AddField($"mtx_{column}_{row}_0", x, y - cellHeight, cellWidth, cellHeight, 0.1f, 0.1f, 0.1f, pdf);
+                        fields.Add(field);
+                    }
+                }
+
+                cellWidth = canvasWidth / screenLinesMatrixWidth;
+                cellHeight = canvasHeight / screenLinesMatrixHeight;
+
+                for (var column = 0; column < screenLinesMatrixWidth; column++)
+                {
+                    for (var rowHeight = 0; rowHeight < screenLinesMatrixHeight; rowHeight++)
+                    {
+                        var x = canvasLeft + column * cellWidth;
+
+                        var height = rowHeight * cellHeight;
+                        var y = canvasTop - (canvasHeight - height) / 2;
+
+                        var field = AddField($"ln_{column}_{rowHeight}_0", x, y - height, cellWidth, height, 0.1f, 0.1f, 0.1f, pdf);
+                        fields.Add(field);
+                    }
+                }
+
+                for (var column = 0; column < screenLinesMatrixWidth; column++)
+                {
+                    for (var rowHeight = 0; rowHeight < screenLinesMatrixHeight; rowHeight++)
+                    {
+                        var x = canvasLeft + column * cellWidth;
+
+                        var height = rowHeight * cellHeight;
+                        var y = canvasTop - (canvasHeight - height) / 2;
+
+                        var field = AddField($"ln_{column}_{rowHeight}_1", x, y - height, cellWidth, height, 0f, 66f, 0f, pdf);
                         fields.Add(field);
                     }
                 }
