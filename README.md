@@ -1,6 +1,6 @@
 # FPS in PDF
 
-Can be played in browser PDF viewer of Chrome, Edge and probably Opera. [The game:](https://github.com/AntonKorn/PDFps/files/8055707/Output.pdf)
+Can be played in browser PDF viewer of Chrome, Edge and probably Opera. [Pdf file of the game](https://github.com/AntonKorn/PDFps/files/8055707/Output.pdf)
 
 ## Controls
 3 "buttons" in the bottom of first page is WASD. When you press forward once, player will start moving forward. If you press it twice, he will stop moving forward. Same is applicable for any button.
