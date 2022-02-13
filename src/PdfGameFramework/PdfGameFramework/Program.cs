@@ -5,12 +5,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PdfGameFramework
 {
     class Program
     {
+        private const string TemplateName = "Master-template.txt";
+
         static void Main(string[] args)
         {
             using (PdfDocument pdf = new PdfDocument())
@@ -141,7 +144,9 @@ namespace PdfGameFramework
 
                 var js = new PdfDictionary(pdf);
                 js.Elements["/S"] = new PdfName("/JavaScript");
-                js.Elements["/JS"] = new PdfString(File.ReadAllText("Main.js"));
+                var jsText = ComposeJs();
+                js.Elements["/JS"] = new PdfString(jsText);
+                File.WriteAllText(TemplateName + ".js", jsText);
 
                 pdf.Internals.AddObject(js);
                 pdf.Internals.Catalog.Elements["/OpenAction"] = PdfSharp.Pdf.Advanced.PdfInternals.GetReference(js);
@@ -208,6 +213,28 @@ namespace PdfGameFramework
             textfield.Elements.Add("/MK", mk);
             textfield.Elements.Add("/Ff", new PdfInteger(2));
             return textfield;
+        }
+
+        private static string ComposeJs()
+        {
+            var templateText = File.ReadAllText(TemplateName);
+            var filePattern = "\\*\\*(.+)\\*\\*";
+
+            var sb = new StringBuilder(templateText.Length);
+            var previousPosition = 0;
+
+            foreach (Match match in Regex.Matches(templateText, filePattern))
+            {
+                sb.Append(templateText.Substring(previousPosition, match.Index - previousPosition));
+                previousPosition = match.Index + match.Value.Length;
+
+                var fileName = match.Groups[1].Value;
+                var jsText = File.ReadAllText(fileName);
+                sb.Append(jsText);
+            }
+
+            sb.Append(templateText.Substring(previousPosition, templateText.Length - previousPosition));
+            return sb.ToString();
         }
     }
 }

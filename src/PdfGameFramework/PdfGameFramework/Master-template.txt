@@ -1,0 +1,9 @@
+﻿try {
+	**Map.js**
+	**LinesLayerGraphics.js**
+	**MatrixLayerGraphics.js**
+	**GameObjects.js**
+	**Main.js**
+} catch(e) {
+	app.alert(e);
+}
