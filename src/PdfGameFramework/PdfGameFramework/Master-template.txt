@@ -1,5 +1,10 @@
 ﻿try {
 	**Map.js**
+	**Constants\Colors.js**
+	**CommonBehaviours\DrawWallsAndObjectsBehaviour.js**
+	**CommonBehaviours\UpdatePlayerLocationBehaviour.js**
+	**Scenes\BaseScene.js**
+	**Scenes\TestScene\TestScene.js**
 	**LinesLayerGraphics.js**
 	**MatrixLayerGraphics.js**
 	**GameObjects.js**
