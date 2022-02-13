@@ -3,7 +3,7 @@
     var canvasWidth = 50;
     var canvasHeight = 50;
 
-    var linesCanvasWidth = 80;
+    var linesCanvasWidth = 100;
     var linesCanvasMaxHeight = 60;
 
     var fieldOfView = Math.PI / 3;
@@ -13,6 +13,7 @@
     var playerAngle = 2;
 
     var angleDelta = 0;
+    var speed = 0;
 
     var updateDuration = 100;
     app.setInterval("physicsUpdate()", updateDuration);
@@ -62,7 +63,6 @@
     }
 
     function fillInitialScreenState() {
-        app.alert("a");
         for (var x = 0; x < canvasWidth; x++) {
             var column = [];
             screenState.push(column);
@@ -84,7 +84,19 @@
             var lastUpdateColumn = x + columnsPerUpdate;
 
             if (angleDelta != 0) {
-                playerAngle += angleDelta;
+                playerAngle += angleDelta * updateDuration;
+            }
+
+            if (speed != 0) {
+                var nextPlayerX = playerX + Math.sin(playerAngle) * speed * updateDuration;
+                var nextPlayerY = playerY + Math.cos(playerAngle) * speed * updateDuration;
+
+                //app.alert(Math.floor(nextPlayerX) + " " + nextPlayerY);
+
+                if (!isCollision(Math.floor(nextPlayerX), Math.floor(nextPlayerY))) {
+                    playerX = nextPlayerX;
+                    playerY = nextPlayerY;
+                }
             }
 
             for (var x = 0; x < lastUpdateColumn; x++) {
@@ -137,20 +149,39 @@
         }
     }
 
-    var cameraSpeed = 0.2;
+    var cameraSpeed = 0.001;
+    var playerSpeed = 0.005;
 
     function leftClicked() {
-        angleDelta = -cameraSpeed;
+        if (angleDelta < 0) {
+            angleDelta = 0;
+        } else {
+            angleDelta = -cameraSpeed;
+        }
     }
 
     function bottomClicked() {
+        if (speed < 0) {
+            speed = 0;
+        } else {
+            speed = -playerSpeed;
+        }
     }
 
     function topClicked() {
+        if (speed > 0) {
+            speed = 0;
+        } else {
+            speed = playerSpeed;
+        }
     }
 
     function rightClicked() {
-        angleDelta = cameraSpeed;
+        if (angleDelta > 0) {
+            angleDelta = 0;
+        } else {
+            angleDelta = cameraSpeed;
+        }
     }
 
     function setGreen(x, y) {
@@ -269,7 +300,7 @@
     }
 
     function isCollision(x, y) {
-        return IsOutOfBounds(x, y) || isMapTileSet(x, y);
+        return isOutOfBounds(x, y) || isMapTileSet(x, y);
     }
 
     function isOutOfBounds(x, y) {
